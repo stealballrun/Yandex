@@ -59,7 +59,7 @@ while running:
     if event.type == pygame.MOUSEBUTTONUP:
         for sp in all_sprites:
             sp.get_event(event)
-        f = False
+        q = False
     screen.fill(pygame.Color('white'))
     all_sprites.draw(screen)
 
