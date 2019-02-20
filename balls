@@ -1,0 +1,120 @@
+import os
+import random
+import pygame
+
+
+def abs(i):
+    if i>= 0:
+        return i
+    else:
+        return -i
+
+
+def load_image(name, colorkey=None):
+    fullname = name
+    try:
+        img = pygame.img.load(fullname)
+    except pygame.error as message:
+        print('Cannot load img:', name)
+        raise SystemExit(message)
+    img = img.convert_alpha()
+
+    if colorkey is not None:
+        if colorkey is 1:
+            colorkey = img.get_at((0, 0))
+        img.set_colorkey(colorkey)
+    return img
+
+
+class Ball(pygame.sprite.Sprite):
+    def __init__(self, radius, x, y):
+        super().__init__(all_sprites)
+        self.add(ball_sprite)
+        self.radius = radius
+        self.radius = radius
+        self.img = pygame.Surface((2 * radius, 2 * radius), pygame.SRCALPHA, 32)
+        pygame.draw.circle(self.img, pygame.Color("red"), (radius, radius), radius)
+        self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
+        self.vx = random.randint(-5, 5)
+        self.vy = random.randrange(-5, 5)
+        self.k = False
+
+    def update(self):
+        self.rect = self.rect.move(self.vx, self.vy)
+        if pygame.sprite.spritecollideany(self, horizontal_borders):
+            self.vy = -self.vy
+        if pygame.sprite.spritecollideany(self, vertical_borders):
+            self.vx = -self.vx
+        if pygame.sprite.spritecollideany(self, hor):
+            self.vy = abs(self.vy)
+
+
+class Border(pygame.sprite.Sprite):
+   
+    def __init__(self, x1, y1, x2, y2):
+        super().__init__(all_sprites)
+        if x1 == x2:  
+            self.add(vertical_borders)
+            self.img = pygame.Surface([1, y2 - y1])
+            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
+        else:  
+            self.add(horizontal_borders)
+            self.img = pygame.Surface([x2 - x1, 1])
+            self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
+
+
+class Arrowup(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, img):
+        super().__init__(all_sprites)
+        self.img = img
+        self.rect = self.img.get_rect()
+        self.x1 = pos[0]
+        self.x2 = pos[0] + self.rect[0]
+        self.y1 = pos[1]
+        self.y2 = pos[1] + self.rect[1]  
+        
+        self.add(hor)
+        self.rect = pygame.Rect(self.x1, self.y1, self.x2 - self.x1, 1)  
+
+    def update(self):
+        pass
+
+
+all_sprites = pygame.sprite.Group()
+
+ball_sprite = pygame.sprite.Group()
+arrow_sprite = pygame.sprite.Group()
+horizontal_borders = pygame.sprite.Group()
+vertical_borders = pygame.sprite.Group()
+hor = pygame.sprite.Group()
+
+size = width, height = 400, 300
+screen = pygame.display.set_mode(size)
+
+Border(5, 5, width - 5, 5)
+Border(5, height - 5, width - 5, height - 5)
+Border(5, 5, 5, height - 5)
+Border(width - 5, 5, width - 5, height - 5)
+
+img = load_image('down.png')
+pos = (30, 40)
+Missile(pos, img)
+
+for i in range(10):
+    Ball(20, 100, 100)
+
+# добавлем объект стрелка и  загружаем для него изображение
+
+clock = pygame.time.Clock()
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    screen.fill(pygame.Color("white"))
+    all_sprites.draw(screen)
+    all_sprites.update()
+    pygame.display.flip()
+    clock.tick(50)
+pygame.quit()
