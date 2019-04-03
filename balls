@@ -3,27 +3,27 @@ import random
 import pygame
 
 
-def abs(i):
-    if i>= 0:
-        return i
+def abs(a):
+    if a>= 0:
+        return a
     else:
-        return -i
+        return -a
 
 
 def load_image(name, colorkey=None):
     fullname = name
     try:
-        img = pygame.img.load(fullname)
+        image = pygame.image.load(fullname)
     except pygame.error as message:
-        print('Cannot load img:', name)
+        print('Cannot load image:', name)
         raise SystemExit(message)
-    img = img.convert_alpha()
+    image = image.convert_alpha()
 
     if colorkey is not None:
-        if colorkey is 1:
-            colorkey = img.get_at((0, 0))
-        img.set_colorkey(colorkey)
-    return img
+        if colorkey is -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    return image
 
 
 class Ball(pygame.sprite.Sprite):
@@ -32,8 +32,8 @@ class Ball(pygame.sprite.Sprite):
         self.add(ball_sprite)
         self.radius = radius
         self.radius = radius
-        self.img = pygame.Surface((2 * radius, 2 * radius), pygame.SRCALPHA, 32)
-        pygame.draw.circle(self.img, pygame.Color("red"), (radius, radius), radius)
+        self.image = pygame.Surface((2 * radius, 2 * radius), pygame.SRCALPHA, 32)
+        pygame.draw.circle(self.image, pygame.Color("red"), (radius, radius), radius)
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
         self.vx = random.randint(-5, 5)
         self.vy = random.randrange(-5, 5)
@@ -50,37 +50,38 @@ class Ball(pygame.sprite.Sprite):
 
 
 class Border(pygame.sprite.Sprite):
-   
+    # строго вертикальный или строго горизонтальный отрезок
     def __init__(self, x1, y1, x2, y2):
         super().__init__(all_sprites)
-        if x1 == x2:  
+        if x1 == x2:  # вертикальная стенка
             self.add(vertical_borders)
-            self.img = pygame.Surface([1, y2 - y1])
+            self.image = pygame.Surface([1, y2 - y1])
             self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
-        else:  
+        else:  # горизонтальная стенка
             self.add(horizontal_borders)
-            self.img = pygame.Surface([x2 - x1, 1])
+            self.image = pygame.Surface([x2 - x1, 1])
             self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
 
 
-class Arrowup(pygame.sprite.Sprite):
+class Missile(pygame.sprite.Sprite):
     
-    def __init__(self, pos, img):
+    def __init__(self, pos, image):
         super().__init__(all_sprites)
-        self.img = img
-        self.rect = self.img.get_rect()
+        self.image = image
+        self.rect = self.image.get_rect()
         self.x1 = pos[0]
         self.x2 = pos[0] + self.rect[0]
         self.y1 = pos[1]
         self.y2 = pos[1] + self.rect[1]  
         
         self.add(hor)
-        self.rect = pygame.Rect(self.x1, self.y1, self.x2 - self.x1, 1)  
+        self.rect = pygame.Rect(self.x1, self.y1, self.x2 - self.x1, 1)      
 
     def update(self):
         pass
 
 
+# группа, содержащая все спрайты
 all_sprites = pygame.sprite.Group()
 
 ball_sprite = pygame.sprite.Group()
