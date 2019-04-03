@@ -2,7 +2,7 @@ import os
 
 import pygame
 
-size = width, height = 505, 200
+size = width, height = 101, 600
 screen = pygame.display.set_mode(size)
 
 
@@ -34,21 +34,22 @@ class Sp(pygame.sprite.Sprite):
         super().__init__(group)
         self.image = Sp.image
         self.rect = self.image.get_rect()
-        self.rect.x = 50 * i
-        self.rect.y = 0
+        self.rect.x = 0
+        self.rect.y = 200 * i
         self.start = False
 
     def get_event(self, event):
         if self.start or self.rect.collidepoint(event.pos):
             self.start = True
-            self.rect.x -= y
+            self.rect.x -= 1
 
 
-for i in range(5):
+for i in range(3):
     Sp(all_sprites)
 
 fps = 50
 running = True
+t = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,7 +60,7 @@ while running:
     if event.type == pygame.MOUSEBUTTONUP:
         for sp in all_sprites:
             sp.get_event(event)
-        q = False
+        f = False
     screen.fill(pygame.Color('white'))
     all_sprites.draw(screen)
 
